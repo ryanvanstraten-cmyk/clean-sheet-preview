@@ -1,0 +1,538 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="CS Test">
+<meta name="theme-color" content="#0a0d0b">
+<meta name="color-scheme" content="dark">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}</style>
+<title>Clean Sheet (test copy)</title>
+<style>
+/* Barlow / Barlow Condensed (SIL Open Font License), bundled so the app looks the same offline. */
+@font-face{font-family:"Barlow Condensed";font-weight:600;font-display:swap;src:url(fonts/BarlowCondensed-600.woff2) format("woff2")}
+@font-face{font-family:"Barlow Condensed";font-weight:700;font-display:swap;src:url(fonts/BarlowCondensed-700.woff2) format("woff2")}
+@font-face{font-family:"Barlow Condensed";font-weight:800;font-display:swap;src:url(fonts/BarlowCondensed-800.woff2) format("woff2")}
+@font-face{font-family:"Barlow Condensed";font-weight:900;font-display:swap;src:url(fonts/BarlowCondensed-900.woff2) format("woff2")}
+@font-face{font-family:"Barlow";font-weight:400;font-display:swap;src:url(fonts/Barlow-400.woff2) format("woff2")}
+@font-face{font-family:"Barlow";font-weight:600;font-display:swap;src:url(fonts/Barlow-600.woff2) format("woff2")}
+@font-face{font-family:"Barlow";font-weight:700;font-display:swap;src:url(fonts/Barlow-700.woff2) format("woff2")}
+:root{
+  color-scheme:dark;
+  --bg:#0a0d0b; --card:#141a17; --card2:#1a221e; --line:#25302a; --line2:#334038;
+  --ink:#f3f6f1; --ink-soft:#93a099; --volt:#b6ff3b; --volt-ink:#0a0d0b; --volt-dim:rgba(182,255,59,.14);
+  --gold:#ffc531; --sky:#4fb3ff; --bad:#ff5a4e; --warn:#ffa62b; --good:#b6ff3b;
+  --shadow:0 10px 30px rgba(0,0,0,.35);
+  --cond:"Barlow Condensed","Avenir Next Condensed","Arial Narrow",sans-serif;
+  --text:"Barlow","Avenir Next",system-ui,-apple-system,sans-serif;
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--text);font-size:17px;line-height:1.4;-webkit-font-smoothing:antialiased;
+  background-image:
+    radial-gradient(900px 600px at 0% -10%, rgba(31,107,58,.35), transparent 60%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 800'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='.05' stroke-width='3'%3E%3Ccircle cx='800' cy='800' r='420'/%3E%3Ccircle cx='800' cy='800' r='14'/%3E%3Cpath d='M0 800h800'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat:no-repeat,no-repeat;background-position:0 0,right bottom;background-size:auto,min(90vw,800px) auto;background-attachment:fixed,fixed}
+.wrap{max-width:1320px;margin:0 auto;padding-block:14px 48px;padding-inline:16px;display:flex;flex-direction:column;gap:16px}
+.cols{display:grid;grid-template-columns:1fr;gap:16px}
+.col{display:flex;flex-direction:column;gap:16px;min-width:0}
+@media (min-width:900px){.cols{grid-template-columns:1.15fr 1fr;align-items:start}.tile{min-height:160px}.tile .t{font-size:38px}.board .v{font-size:64px}.step{padding:14px 16px}.step .n{font-size:19px}}
+h1,h2,h3{font-family:var(--cond);text-wrap:balance;margin:0;text-transform:uppercase;letter-spacing:.01em}
+svg.i{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.15em;flex:none}
+button{font-family:var(--cond);font-size:19px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;border:0;border-radius:999px;padding:12px 20px;background:var(--volt);color:var(--volt-ink);min-height:48px;line-height:1;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+button:active{transform:translateY(1px)}
+button:focus-visible,.step:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
+button.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line2)}
+button.gold{background:var(--card2);color:var(--volt);border:1.5px solid var(--volt)}
+#askLast button.pick{background:var(--volt);color:var(--volt-ink);border:1.5px solid var(--volt)}
+#askLast button.unpick{background:transparent;color:var(--ink-soft);border:1.5px solid var(--line2)}
+button[disabled]{opacity:.4;cursor:default}
+/* header */
+.hello{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;padding-inline:2px}
+.hello .sub{display:inline-flex;align-items:center;gap:6px;font-family:var(--cond);font-size:14px;color:var(--volt);font-weight:700;letter-spacing:.16em;text-transform:uppercase}
+.hello h1{font-size:44px;font-weight:900;line-height:.95;margin-top:2px}
+.hello .day{font-family:var(--cond);font-weight:700;font-size:16px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink);background:var(--card2);border:1.5px solid var(--line2);border-radius:999px;padding:8px 14px}
+/* scoreboard */
+.board{background:linear-gradient(135deg,#182320,#0f1512);border:1.5px solid var(--line);border-top:3px solid var(--volt);border-radius:20px;padding:16px 18px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.board::after{content:"";position:absolute;right:-60px;top:-80px;width:260px;height:260px;border:2px solid rgba(255,255,255,.05);border-radius:50%;pointer-events:none}
+.board>div{position:relative;min-width:0}
+.board .k{display:flex;align-items:center;gap:6px;font-family:var(--cond);font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:12px;color:var(--ink-soft)}
+.board .v{font-family:var(--cond);font-weight:900;font-size:46px;line-height:1;font-variant-numeric:tabular-nums;margin-top:6px;color:var(--ink)}
+.board>div:first-child .v{color:var(--volt)}
+.board .v small{display:block;font-family:var(--cond);font-size:15px;font-weight:700;color:var(--ink-soft);margin:6px 0 0;letter-spacing:.08em;text-transform:uppercase}
+/* wash tiles */
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tile{background:var(--card);border-radius:20px;padding:18px;text-align:left;color:var(--ink);box-shadow:var(--shadow);border:1.5px solid var(--line);display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;gap:10px;min-height:130px;letter-spacing:0;text-transform:none;position:relative;overflow:hidden}
+.tile::before{content:"";position:absolute;inset:0;background:linear-gradient(160deg,rgba(255,255,255,.04),transparent 50%);pointer-events:none}
+.tile .t{font-family:var(--cond);font-weight:800;font-size:30px;line-height:1;text-transform:uppercase;display:flex;align-items:center;gap:10px}
+.tile .t .ic{width:40px;height:40px;border-radius:12px;background:var(--volt-dim);color:var(--volt);display:grid;place-items:center;font-size:24px}
+.tile .s{font-family:var(--text);color:var(--ink-soft);font-size:15px;font-weight:600}
+.tile.done{border-color:var(--volt)}
+.tile.done .t .ic{background:var(--volt);color:var(--volt-ink)}
+.tile.done .s{color:var(--volt)}
+/* panels */
+.panel{background:var(--card);border:1.5px solid var(--line);border-radius:20px;padding:16px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:12px}
+.panel h2{font-size:26px;font-weight:800;display:flex;align-items:center;gap:8px}
+.panel h2 .ic{color:var(--volt);font-size:22px}
+.panel h2 span.pts,.panel h2 > span{font-weight:800;color:var(--volt);font-size:18px;margin-left:auto;letter-spacing:.06em}
+.steps{display:flex;flex-direction:column;gap:8px;margin:0;padding:0;list-style:none}
+.step{display:flex;gap:12px;align-items:flex-start;background:var(--card2);border:1.5px solid var(--line);border-radius:14px;padding:12px;cursor:pointer;user-select:none;-webkit-user-select:none;transition:border-color .15s,background .15s}
+.step .box{flex:0 0 30px;height:30px;border-radius:50%;border:2px solid var(--line2);display:grid;place-items:center;font-weight:800;color:var(--volt-ink);margin-top:1px;font-size:18px}
+.step.on{border-color:var(--volt);background:var(--volt-dim)}
+.step.on .box{background:var(--volt);border-color:var(--volt)}
+.step.locked{opacity:.5;cursor:default}
+.step .n{font-weight:700}
+.step .d{color:var(--ink-soft);font-size:15px}
+.step .pts{margin-left:auto;font-family:var(--cond);font-weight:800;font-size:20px;color:var(--volt);white-space:nowrap}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row.end{justify-content:flex-end}
+.row.between{justify-content:space-between}
+.note{background:rgba(255,197,49,.1);border-left:4px solid var(--gold);padding:10px 12px;border-radius:10px;font-size:15px}
+.note.eye{border-left-color:var(--sky);background:rgba(79,179,255,.1)}
+.timer{font-family:var(--cond);font-weight:900;font-size:56px;line-height:1;font-variant-numeric:tabular-nums;color:var(--volt);display:flex;align-items:center;gap:8px}
+.timer .i{font-size:36px}
+/* trophies */
+.badges{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media (min-width:900px){.badges{grid-template-columns:repeat(6,1fr)}}
+.badge{text-align:center;padding:14px 6px 10px;border-radius:14px;border:1.5px solid var(--line);background:var(--card2);display:flex;flex-direction:column;align-items:center;gap:4px;position:relative}
+.badge .ic{width:36px;height:36px;font-size:36px;color:var(--ink-soft);opacity:.35;stroke-width:1.8}
+.badge .num{font-family:var(--cond);font-weight:800;font-size:20px;line-height:1.1;color:var(--ink);white-space:nowrap}
+.badge .l{font-family:var(--cond);font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);line-height:1.15}
+.badge.won{border-color:var(--gold);background:linear-gradient(180deg,rgba(255,197,49,.22),rgba(255,197,49,.06))}
+.badge.won .ic{color:var(--gold);opacity:1}
+.badge.won .num{color:var(--gold)}
+/* calendar */
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.cal .h{font-family:var(--cond);font-size:13px;text-align:center;color:var(--ink-soft);font-weight:700;letter-spacing:.1em}
+.cal .c{aspect-ratio:1;border-radius:10px;display:grid;place-items:center;font-family:var(--cond);font-size:16px;font-weight:700;background:var(--card2);border:1.5px solid var(--line);color:var(--ink-soft)}
+.cal .c.cs{background:var(--volt);color:var(--volt-ink);border-color:var(--volt)}
+.cal .c.half{background:rgba(255,166,43,.18);border-color:var(--warn);color:var(--ink)}
+.cal .c.miss{background:rgba(255,90,78,.14);border-color:var(--bad);color:var(--ink)}
+.cal .c.saved{background:rgba(79,179,255,.18);border-color:var(--sky);color:var(--ink)}
+.cal .c.today{outline:2px solid var(--ink);outline-offset:-2px}
+.cal .c.future,.cal .c.pre{opacity:.3}
+.calnav{min-height:40px;padding:6px 12px;font-size:18px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:14px;color:var(--ink-soft)}
+.legend i{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-2px;margin-right:4px}
+/* settings */
+.tog{display:flex;gap:0;border:1.5px solid var(--line2);border-radius:999px;overflow:hidden}
+.tog button{border-radius:0;background:transparent;color:var(--ink);flex:1;min-height:44px;padding:8px 10px;font-size:16px}
+.tog button.on{background:var(--volt);color:var(--volt-ink)}
+.set{display:flex;flex-direction:column;gap:6px;padding:12px 0;border-top:1px solid var(--line)}
+.set .l{font-family:var(--cond);font-weight:800;font-size:19px;text-transform:uppercase;letter-spacing:.04em}
+input[type=tel],input[type=text],input[type=date],textarea{font:inherit;padding:10px;border:1.5px solid var(--line2);border-radius:10px;background:var(--bg);color:var(--ink);width:100%}
+textarea{min-height:120px;font-size:13px;font-family:ui-monospace,Menlo,monospace}
+.small{font-size:14px;color:var(--ink-soft)}
+details summary{cursor:pointer;font-family:var(--cond);font-weight:800;font-size:22px;text-transform:uppercase;letter-spacing:.02em;list-style:none;display:flex;align-items:center;gap:8px}
+details summary::-webkit-details-marker{display:none}
+details summary::after{content:"";width:10px;height:10px;border-right:2px solid var(--ink-soft);border-bottom:2px solid var(--ink-soft);transform:rotate(45deg);margin-left:auto;transition:transform .15s}
+details[open] summary::after{transform:rotate(-135deg)}
+label{display:block;font-size:14px;color:var(--ink-soft);font-weight:600}
+label input{margin-top:4px}
+/* toasts + confetti */
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:12px 20px;border-radius:999px;font-family:var(--cond);font-weight:700;font-size:19px;letter-spacing:.04em;text-transform:uppercase;box-shadow:var(--shadow);max-width:90vw;text-align:center;z-index:10}
+.toast.big{background:var(--volt);color:var(--volt-ink);font-size:28px;font-weight:900;padding:16px 28px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.confetti{position:fixed;top:-40px;z-index:9;width:10px;height:18px;border-radius:2px;pointer-events:none;animation:fall 1.8s ease-in forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg);opacity:.2}}
+@media (prefers-reduced-motion:reduce){.confetti{display:none}}
+@media (prefers-reduced-motion:no-preference){.toast{animation:pop .25s ease-out}@keyframes pop{from{transform:translateX(-50%) translateY(12px);opacity:0}}}
+@media (max-width:600px){.board{padding:14px}.board .k{font-size:11px;letter-spacing:.1em}.board .v{font-size:34px}.board>div:last-child .v{font-size:24px!important;padding-top:2px!important}.tile .t{font-size:24px}.hello h1{font-size:36px}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-glove" viewBox="0 0 24 24"><path d="M8.5 21h6.5a3 3 0 0 0 3-3v-7.5a1.5 1.5 0 0 0-3 0V9a1.5 1.5 0 0 0-3 0V4.5a1.5 1.5 0 0 0-3 0V12l-1.7-2.4a1.4 1.4 0 0 0-2.3 1.6L6.9 16.5A5 5 0 0 0 8.5 21z"/></symbol>
+  <symbol id="i-shower" viewBox="0 0 24 24"><path d="M6 20V7a3 3 0 0 1 3-3h1"/><path d="M10 4a4 4 0 0 1 4 4v1"/><path d="M9 9h10v1a2 2 0 0 1-2 2h-6a2 2 0 0 1-2-2z"/><path d="M11 15v1M14 15v2M17 15v1M12.5 19v1M15.5 19v1"/></symbol>
+  <symbol id="i-sink" viewBox="0 0 24 24"><path d="M12 3s6 6.6 6 11a6 6 0 0 1-12 0c0-4.4 6-11 6-11z"/><path d="M9.5 14.5a2.5 2.5 0 0 0 2 2.4"/></symbol>
+  <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 3h8v6a4 4 0 0 1-8 0z"/><path d="M8 5H5v1a3 3 0 0 0 3 3M16 5h3v1a3 3 0 0 1-3 3"/><path d="M12 13v3M9 21h6M10 16h4a1 1 0 0 1 1 1v4H9v-4a1 1 0 0 1 1-1z"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7l1.5-3h5L16 7"/><circle cx="12" cy="13.5" r="3.5"/></symbol>
+  <symbol id="i-medal" viewBox="0 0 24 24"><circle cx="12" cy="15" r="5"/><path d="M8.7 11 6 3h4l2 5 2-5h4l-2.7 8"/></symbol>
+  <symbol id="i-ball" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7.5l4.3 3.1-1.6 5H9.3l-1.6-5z"/><path d="M12 7.5V3M16.3 10.6l4.2-1.4M14.7 15.6l2.6 3.5M9.3 15.6l-2.6 3.5M7.7 10.6 3.5 9.2"/></symbol>
+  <symbol id="i-timer" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/></symbol>
+  <symbol id="i-left" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+  <symbol id="i-right" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></symbol>
+</svg>
+
+<div class="wrap" id="app">
+  <div class="hello">
+    <div><div class="sub"><svg class="i"><use href="#i-glove"/></svg>Goalkeeper's log</div><h1 id="hello"><span id="helloName">Clean Sheet</span></h1></div>
+    <div class="day" id="dayline"></div>
+  </div>
+
+  <div class="cols"><div class="col">
+  <div class="board" role="group" aria-label="Scoreboard">
+    <div><div class="k"><svg class="i"><use href="#i-glove"/></svg>Clean-sheet run</div><div class="v" id="streak">0<small>days</small></div></div>
+    <div><div class="k">Points</div><div class="v" id="points">0</div></div>
+    <div><div class="k">Level</div><div class="v" id="level" style="font-size:28px;padding-top:6px">Rookie</div></div>
+  </div>
+
+  <div id="photoCard" class="panel" hidden>
+    <h2><svg class="i ic"><use href="#i-camera"/></svg>Photo day <span>+100</span></h2>
+    <div class="note">Before any wash today: stand in the same bathroom light as last time, hair pulled back, phone at arm's length, forehead filling the frame. Take it with the iPad camera and put it in the album called <b>Forehead</b>.</div>
+    <div class="row end"><button id="photoDone">Photo taken</button></div>
+  </div>
+
+  <div class="tiles" id="tiles">
+    <button class="tile" id="tShower"><span class="t"><span class="ic"><svg class="i"><use href="#i-shower"/></svg></span>Shower</span><span class="s" id="sShower">Humane 5% BP wash</span></button>
+    <button class="tile" id="tSink"><span class="t"><span class="ic"><svg class="i"><use href="#i-sink"/></svg></span>Sink</span><span class="s" id="sSink">Shield Labs wash</span></button>
+  </div>
+
+  <div class="row between note" id="undoRow" hidden><span id="undoText"></span><button class="ghost" id="undoBtn">Undo</button></div>
+
+  <div class="panel" id="session" hidden>
+    <h2 id="sessTitle">Shower</h2>
+    <div id="askLast" class="row" hidden>
+      <div style="flex:1 1 200px">Is this your <b>last wash tonight</b>?</div>
+      <button class="gold" id="lastNo">No, one more later</button>
+      <button class="gold" id="lastYes">Yes, bedtime</button>
+    </div>
+    <div id="eyeNote" class="note eye" hidden><b>Eyes closed</b> the whole time the wash is on. Fingers, not splashing. Rinse the forehead downward before you open them. Stings if it gets in - rinse with water, it passes.</div>
+    <ul class="steps" id="steps"></ul>
+    <div id="timerBox" class="row" hidden><div class="timer"><svg class="i"><use href="#i-timer"/></svg><span id="timer">60</span></div><div class="small">Let your face dry all the way before the Differin. The step unlocks when this hits zero.</div></div>
+    <div class="row end"><button class="ghost" id="sessClose">Close</button><button id="sessFinish" disabled>Full time +25</button></div>
+  </div>
+
+  </div><div class="col">
+  <div class="panel">
+    <h2><svg class="i ic"><use href="#i-trophy"/></svg>Trophy cabinet</h2>
+    <div class="badges" id="badges"></div>
+  </div>
+
+  <div class="panel">
+    <div class="row between"><button class="ghost calnav" id="calPrev" aria-label="Previous month"><svg class="i"><use href="#i-left"/></svg></button><h2 id="calTitle">This month</h2><button class="ghost calnav" id="calNext" aria-label="Next month"><svg class="i"><use href="#i-right"/></svg></button></div>
+    <div class="cal" id="cal"></div>
+    <div class="legend"><span><i style="background:var(--volt)"></i>Clean sheet</span><span><i style="background:rgba(255,166,43,.18);border:1px solid var(--warn)"></i>One wash</span><span><i style="background:rgba(79,179,255,.18);border:1px solid var(--sky)"></i>Saved</span><span><i style="background:rgba(255,90,78,.14);border:1px solid var(--bad)"></i>Missed</span></div>
+    <div class="small" id="saves"></div>
+  </div>
+
+  <details class="panel">
+    <summary>Settings</summary>
+    <div class="set"><div class="l">Azelaic acid</div><div class="small">If the products make your face sting or peel, pause the azelaic acid for a week. It comes back on by itself.</div><div class="row"><button class="ghost" id="pauseAz">Pause for 7 days</button></div></div>
+    <div class="set"><div class="l">Benzoyl peroxide wash</div><div class="small">Normally every shower. If your forehead gets sore from it, switch to every other shower - the app then tells you in the Shower list which showers use it.</div><div class="tog" id="bpTog"><button type="button" id="bpEvery">Every shower</button><button type="button" id="bpOther">Every other shower</button></div></div>
+    <div class="set"><div class="l">Backup</div><div class="small">Progress lives on this iPad only. Tap the button every week or two - it opens Messages with your backup code already typed in; just hit send. Dad keeps the code in case the iPad loses it.</div><label>Dad's phone number<input type="tel" id="dadPhone" placeholder="+1 360 555 0100"></label><div class="row"><button id="textBtn">Text my backup to Dad</button><button class="ghost" id="exportBtn">Show the code</button><button class="ghost" id="importBtn">Load a code</button></div><textarea id="io" hidden></textarea><div class="row" id="ioRow" hidden><button class="ghost" id="copyBtn">Copy</button><button class="ghost" id="loadBtn">Load this code</button></div><div class="note" id="loadConfirm" hidden><div id="loadText"></div><div class="row end" style="margin-top:8px"><button class="ghost" id="loadNo">Cancel</button><button id="loadYes">Replace</button></div></div></div>
+    <div class="set"><div class="l">Plan</div><label>Start date (day 1)<input type="date" id="startDate"></label><label>Your name<input type="text" id="nameIn" maxlength="40"></label></div>
+    <div class="set"><div class="l">Today</div><div class="small">Logged the wrong thing today? This clears today's washes and today's points so you can do the day again.</div><div class="row"><button class="ghost" id="clearBtn">Delete today's entries</button><button class="ghost" id="clearYes" hidden style="border-color:var(--bad);color:var(--bad)">Yes, clear today</button></div></div>
+    <div class="set"><div class="l">Start over</div><div class="row"><button class="ghost" id="resetBtn" style="color:var(--bad)">Wipe all progress</button><button class="ghost" id="resetYes" hidden style="border-color:var(--bad);color:var(--bad)">Yes, wipe everything</button></div></div>
+  </details>
+  </div></div>
+</div>
+<div id="live" class="sr" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+'use strict';
+// ---------- routine of record (routine-2026-09-22-r5.md) ----------
+const PLAN_START = '2026-09-24';   // day 1 (Ryan, 2026-09-22)
+const STATE_V = 2;                 // bump when saved data needs a one-time change on load
+const SPF_FROM = '2027-03-01';
+const DAY_CUTOFF = 3;              // a wash before 3 am belongs to the day before
+const BEDTIME_FROM = 15;           // sessions at/after 3 pm ask "last wash tonight?"
+const LEVELS = [[0,'Rookie'],[500,'Starter'],[2500,'First Team'],[6000,'Captain'],[12000,'Legend']];
+const BADGES = [[3,'i-ball','Hat-trick'],[7,'i-medal','One week'],[14,'i-medal','Two weeks'],[30,'i-medal','A month'],[60,'i-trophy','Two months'],[84,'i-glove','Twelve weeks - check-in']];
+const MODES = ['','day','bed','plain'];   // which treatment steps a session carried
+const KEY = 'cleansheet-preview-v1';   // test copy: separate saved data from the live app
+const pad = n => String(n).padStart(2,'0');
+const iso = d => d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const parse = s => { const [y,m,d] = String(s).split('-').map(Number); return new Date(y,m-1,d); };
+const addDays = (s,n) => { const d = parse(s); d.setDate(d.getDate()+n); return iso(d); };
+const daysBetween = (a,b) => Math.round((parse(b)-parse(a))/86400000);
+const RE_DATE = /^\d{4}-\d{2}-\d{2}$/, RE_TIME = /^\d\d:\d\d$/;
+const cleanName = s => String(s||'').replace(/[|;,]/g,'').trim().slice(0,40);
+
+// "today" for the plan: the calendar date, except that 00:00-02:59 still counts as the previous day.
+function today(){ const d = new Date(); if (d.getHours() < DAY_CUTOFF) d.setDate(d.getDate()-1); return iso(d); }
+
+let S = null;
+function fresh(){ return {v:STATE_V, name:'Nolan', start: PLAN_START, days:{}, points:0, streak:0, best:0, cleanSheets:0, saves:0, saveUsed:'', processed:'', azPausedUntil:'', bpAlt:false, bpShowers:0, dadPhone:''}; }
+function load(){ try{ const j = localStorage.getItem(KEY); if (j){ const o = JSON.parse(j); S = Object.assign(fresh(), o); migrate(Number(o.v) || 1); } else S = fresh(); }catch(e){ S = fresh(); } }
+// One-time changes to data saved by an older version of the page.
+function migrate(v){ if (v < 2){ S.start = PLAN_START; } S.v = STATE_V; }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+
+const dayNum = () => daysBetween(S.start, today()) + 1;              // day 1 = start date
+const isPhotoDay = () => { const n = dayNum()-1; return n >= 0 && n <= 84 && n % 14 === 0; };
+const adapaleneTonight = () => { const n = dayNum(); return n >= 15 || (n >= 1 && n % 2 === 1); };
+const lotionName = () => today() >= SPF_FROM ? 'CeraVe AM SPF 30' : 'CeraVe PM lotion';
+const azPaused = () => S.azPausedUntil && today() < S.azPausedUntil;
+const dayRec = d => S.days[d] || (S.days[d] = {shower:null, sink:null, photo:false, cs:false, pts:0});
+const isBedtimeSlot = () => { const h = new Date().getHours(); return h >= BEDTIME_FROM || h < DAY_CUTOFF; };
+const otherOf = kind => kind === 'shower' ? 'sink' : 'shower';
+const otherMode = kind => { const r = dayRec(today()); const o = otherOf(kind); return r[o] ? (r[o+'Mode'] || '') : ''; };
+const levelFor = p => { let cur = LEVELS[0], next = null; for (const l of LEVELS){ if (p >= l[0]) cur = l; else { next = l; break; } } return {name:cur[1], next}; };
+
+// ---------- streak bookkeeping: rebuilt from the day log every time ----------
+// Walks every day from the start date to today. A clean sheet extends the run; a finished day
+// without one either spends a save (only if there is a run to protect, and at most one save per 7 days)
+// or ends the run. Today is never counted as missed because it is not over yet.
+function recompute(){
+  const t = today();
+  let streak = 0, best = 0, cs = 0, saves = 0, saveUsed = '', guard = 0;
+  if (RE_DATE.test(S.start) && !isNaN(parse(S.start))) for (let d = S.start; d <= t && guard < 4000; d = addDays(d,1), guard++){
+    const r = S.days[d];
+    if (r && r.cs){ streak++; cs++; if (streak > best) best = streak; if (cs % 5 === 0) saves++; r.saved = false; }
+    else if (d < t){
+      if (streak > 0 && saves > 0 && (!saveUsed || daysBetween(saveUsed, d) >= 7)){ saves--; saveUsed = d; dayRec(d).saved = true; }
+      else { streak = 0; if (r) r.saved = false; }
+    }
+  }
+  S.streak = streak; S.best = best; S.cleanSheets = cs; S.saves = saves; S.saveUsed = saveUsed; S.processed = addDays(t,-1);
+}
+function award(n){ S.points += n; const r = dayRec(today()); r.pts = (r.pts || 0) + n; }   // points are also tallied per day so a day can be cleared
+function cleanSheetCheck(d){
+  const r = dayRec(d);
+  if (!r.cs && r.shower && r.sink){ r.cs = true; award(50); toast('CLEAN SHEET! +50', true); celebrate(); return true; }
+  return false;
+}
+
+// ---------- steps for a session ----------
+function buildSteps(kind, bedtime){
+  const st = [];
+  if (kind === 'shower'){
+    const useBP = !S.bpAlt || (S.bpShowers % 2 === 0);
+    st.push(useBP ? {id:'wash', n:'Humane 5% benzoyl peroxide wash', d:'Forehead only. On for 1-2 minutes, then rinse. Eyes closed.'} : {id:'wash', n:'Wash with water or Shield Labs', d:'Benzoyl peroxide is every other shower right now - not this one.'});
+  } else {
+    st.push({id:'wash', n:'Shield Labs face wash', d:'Forehead and face, then rinse.'});
+  }
+  st.push({id:'towel', n:'Pat dry with a Clean Skin Club towel', d:'A fresh one from the box - not the bath towel (benzoyl peroxide bleaches it). Pat, don\'t rub.'});
+  const other = otherMode(kind), otherName = otherOf(kind);
+  if (bedtime === true && other !== 'bed'){
+    if (adapaleneTonight()){
+      st.push({id:'dry', n:'Wait until your face is fully dry', d:'About a minute. The timer runs it.', timer:true});
+      st.push({id:'adap', n:'Differin (adapalene) - pea-sized', d:'Spread thin over the whole forehead and temples.', locked:true});
+    } else {
+      st.push({id:'nodap', n:'No Differin tonight', d:'Every other night for the first two weeks. Tomorrow is a Differin night.', free:true});
+    }
+    st.push({id:'lotion', n:'CeraVe PM lotion', d:'All over the face.'});
+  } else if (bedtime === false && other !== 'day'){
+    if (!azPaused()) st.push({id:'az', n:'Azelaic acid (The Ordinary)', d:'A thin layer on the forehead.'});
+    else st.push({id:'azp', n:'Azelaic acid is paused until '+S.azPausedUntil, d:'Paused - skip it today.', free:true});
+    st.push({id:'lotion', n:lotionName(), d:'All over the face.'});
+  } else {
+    const why = other === 'bed' ? 'the treatment steps went with your '+otherName+' tonight.' : other === 'day' ? 'the azelaic acid went with your '+otherName+' today.' : 'the treatment steps go with your last wash tonight.';
+    st.push({id:'lotion', n:'CeraVe PM lotion', d:'Wash and lotion only - '+why});
+  }
+  return st;
+}
+const modeOf = steps => steps.some(s => s.id==='adap' || s.id==='nodap') ? 'bed' : steps.some(s => s.id==='az' || s.id==='azp') ? 'day' : 'plain';
+
+// ---------- compact backup code ----------
+const M2L = {day:'d', bed:'b', plain:'p'}, L2M = {d:'day', b:'bed', p:'plain'};
+function encode(){
+  const days = Object.keys(S.days).sort().map(d => { const r = S.days[d]; return daysBetween(S.start,d)+':'+(r.shower||'')+','+(r.sink||'')+','+(r.photo?1:0)+','+(r.cs?1:0)+','+(r.saved?1:0)+','+(M2L[r.showerMode]||'')+','+(M2L[r.sinkMode]||'')+','+(r.pts||0); }).join(';');
+  return ['CS1', S.start, cleanName(S.name), S.points, S.streak, S.best, S.cleanSheets, S.saves, S.saveUsed, S.processed, S.azPausedUntil, S.bpAlt?1:0, S.bpShowers, days].join('|');
+}
+// Throws on anything that is not a usable state; returns a cleaned copy otherwise.
+function check(n){
+  if (!RE_DATE.test(n.start) || isNaN(parse(n.start))) throw 0;
+  for (const k of ['points','streak','best','cleanSheets','saves','bpShowers']){ n[k] = Number(n[k]); if (!Number.isFinite(n[k]) || n[k] < 0) throw 0; n[k] = Math.floor(n[k]); }
+  for (const k of ['saveUsed','processed','azPausedUntil']){ n[k] = n[k] ? String(n[k]) : ''; if (n[k] && !RE_DATE.test(n[k])) throw 0; }
+  n.name = cleanName(n.name); n.bpAlt = !!n.bpAlt; n.dadPhone = String(n.dadPhone||'').replace(/[^+\d]/g,'');
+  const days = {};
+  for (const d of Object.keys(n.days || {})){
+    if (!RE_DATE.test(d)) throw 0; const r = n.days[d] || {};
+    days[d] = {shower: RE_TIME.test(r.shower) ? r.shower : null, sink: RE_TIME.test(r.sink) ? r.sink : null, photo: !!r.photo, cs: !!r.cs, saved: !!r.saved, showerMode: MODES.includes(r.showerMode) ? r.showerMode : '', sinkMode: MODES.includes(r.sinkMode) ? r.sinkMode : '', pts: Math.max(0, Math.floor(Number(r.pts)) || 0)};
+  }
+  n.days = days; n.v = STATE_V; return n;
+}
+function decode(txt){
+  txt = String(txt).trim();
+  if (txt[0]==='{') { const j = JSON.parse(txt); if (!j.days || !j.start) throw 0; return check(Object.assign(fresh(), j)); }
+  const i = txt.indexOf('CS1|'); if (i < 0) throw 0; const f = txt.slice(i).split('|'); if (f.length < 14) throw 0;
+  const n = fresh(); n.start=f[1]; n.name=f[2]; n.points=f[3]; n.streak=f[4]; n.best=f[5]; n.cleanSheets=f[6]; n.saves=f[7]; n.saveUsed=f[8]; n.processed=f[9]; n.azPausedUntil=f[10]; n.bpAlt=f[11]==='1'; n.bpShowers=f[12]; n.dadPhone = S ? S.dadPhone : '';
+  if (!RE_DATE.test(n.start)) throw 0;
+  if (f[13]) f[13].split(';').forEach(x => { const k = x.indexOf(':'); if (k < 0) throw 0; const off = Number(x.slice(0,k)); if (!Number.isInteger(off)) throw 0; const [sh,si,p,cs,sv,shm,sim,pt] = x.slice(k+1).split(','); n.days[addDays(n.start,off)] = {shower:sh||null, sink:si||null, photo:p==='1', cs:cs==='1', saved:sv==='1', showerMode:L2M[shm]||'', sinkMode:L2M[sim]||'', pts:Number(pt)||0}; });
+  return check(n);
+}
+// ---------- UI ----------
+const $ = id => document.getElementById(id);
+let cur = null; // {kind, bedtime, steps, done:Set, timerId, timerEnd}
+let shownDay = '';
+let calOff = 0;      // months back from the current month in the calendar
+let undo = null;     // {snap} - the state just before the last "Finish"
+let undoTimer = null, resetTimer = null, pendingLoad = null;
+const toastQ = []; let toastBusy = false;
+function toast(msg, big){ toastQ.push({msg, big}); if (!toastBusy) nextToast(); }
+function nextToast(){
+  const t = toastQ.shift(); if (!t){ toastBusy = false; return; } toastBusy = true;
+  const el = document.createElement('div'); el.className = 'toast'+(t.big?' big':''); el.textContent = t.msg; document.body.appendChild(el);
+  $('live').textContent = t.msg;
+  setTimeout(()=>{ el.remove(); nextToast(); }, t.big?2200:1400);
+}
+function setVal(id, v){ const el = $(id); if (document.activeElement !== el) el.value = v; }
+function render(){
+  recompute(); save();
+  const n = dayNum();
+  $('helloName').textContent = (S.name ? S.name+"'s " : '')+'Clean Sheet';
+  $('dayline').textContent = n >= 1 ? 'Matchday '+n+(n<=14?' \u00b7 Differin '+(adapaleneTonight()?'tonight':'tomorrow night'):'') : 'Kick-off '+parse(S.start).toLocaleDateString(undefined,{weekday:'short', month:'short', day:'numeric'});
+  $('streak').innerHTML = S.streak+'<small>day'+(S.streak===1?'':'s')+'</small>';
+  $('points').textContent = S.points;
+  const lv = levelFor(S.points);
+  $('level').innerHTML = lv.name + (lv.next ? '<small>next at '+lv.next[0]+'</small>' : '');
+  const r = dayRec(today());
+  $('tShower').classList.toggle('done', !!r.shower); $('tSink').classList.toggle('done', !!r.sink);
+  $('sShower').textContent = r.shower ? 'Done '+r.shower : (S.bpAlt && S.bpShowers%2 ? 'Water or Shield Labs this time' : 'Humane 5% BP wash');
+  $('sSink').textContent = r.sink ? 'Done '+r.sink : 'Shield Labs wash';
+  $('photoCard').hidden = !(isPhotoDay() && !r.photo);
+  $('pauseAz').textContent = azPaused() ? 'Paused until '+S.azPausedUntil+' - tap to resume now' : 'Pause for 7 days';
+  $('bpEvery').classList.toggle('on', !S.bpAlt); $('bpOther').classList.toggle('on', S.bpAlt);
+  setVal('startDate', S.start); setVal('nameIn', S.name); setVal('dadPhone', S.dadPhone || '');
+  renderBadges(); renderCal();
+  $('saves').textContent = 'Saves: '+S.saves+' (a save protects the run through one missed day; you earn one every 5 clean sheets). Best run: '+S.best+' days. Clean sheets: '+S.cleanSheets+'.';
+  shownDay = today();
+}
+function renderBadges(){
+  $('badges').innerHTML = BADGES.map(([d,ic,l]) => '<div class="badge'+(S.best>=d?' won':'')+'" title="'+d+'-day run"><svg class="i ic" aria-hidden="true"><use href="#'+ic+'"/></svg><div class="num">'+d+' days</div><div class="l">'+l+'</div></div>').join('');
+}
+function renderCal(){
+  const t = today(); const base = parse(t); const y = base.getFullYear(), m = base.getMonth() + calOff;
+  const first = new Date(y,m,1);
+  $('calTitle').textContent = first.toLocaleString(undefined,{month:'long', year:'numeric'});
+  $('calNext').disabled = calOff >= 0;
+  const offset = (first.getDay()+6)%7; const days = new Date(y,m+1,0).getDate();
+  let h = ['M','T','W','T','F','S','S'].map(x=>'<div class="h">'+x+'</div>').join('');
+  for (let i=0;i<offset;i++) h += '<div></div>';
+  for (let d=1; d<=days; d++){
+    const s = iso(new Date(y,m,d)); const r = S.days[s]; let cls = 'c';
+    if (s > t) cls += ' future'; else if (s < S.start) cls += ' pre';
+    else if (r && r.cs) cls += ' cs'; else if (r && r.saved) cls += ' saved'; else if (r && (r.shower||r.sink)) cls += ' half'; else if (s < t) cls += ' miss';
+    if (s === t) cls += ' today';
+    h += '<div class="'+cls+'" title="'+s+'">'+d+'</div>';
+  }
+  $('cal').innerHTML = h;
+}
+function openSession(kind){
+  const r = dayRec(today());
+  if (r[kind]) { toast(kind==='shower'?'Shower already done today':'Sink wash already done today'); return; }
+  cur = {kind, bedtime:null, steps:[], done:new Set(), timerId:null, timerEnd:0};
+  $('sessTitle').textContent = kind==='shower' ? 'Shower' : 'Sink';
+  $('session').hidden = false; $('eyeNote').hidden = kind !== 'shower';
+  $('lastNo').className = 'gold'; $('lastYes').className = 'gold'; $('askLast').hidden = true;
+  if (isBedtimeSlot() && otherMode(kind) === 'bed'){ setBedtime(null); }               // Differin already went with the other wash tonight
+  else if (isBedtimeSlot()){ $('askLast').hidden = false; $('steps').innerHTML=''; $('sessFinish').disabled = true; $('timerBox').hidden = true; }
+  else { setBedtime(false); }
+  $('session').scrollIntoView({behavior:'smooth', block:'start'});
+}
+function setBedtime(b){
+  if (cur.timerId){ clearInterval(cur.timerId); cur.timerId = null; } $('timerBox').hidden = true;
+  if (!$('askLast').hidden){ $('lastYes').className = b===true ? 'pick' : 'unpick'; $('lastNo').className = b===true ? 'unpick' : 'pick'; }
+  cur.bedtime = b; const keep = cur.done || new Set(); cur.steps = buildSteps(cur.kind, b); cur.done = new Set();
+  cur.steps.forEach(s => { if (s.free || (keep.has(s.id) && s.id !== 'dry' && s.id !== 'adap')) cur.done.add(s.id); });
+  renderSteps();
+}
+const pendingPoints = () => 25 + 10 * cur.steps.filter(s => !s.free && cur.done.has(s.id)).length;
+function renderSteps(){
+  $('steps').innerHTML = cur.steps.map(s => {
+    const on = cur.done.has(s.id); const locked = s.locked && !cur.done.has('dry');
+    return '<li class="step'+(on?' on':'')+(locked?' locked':'')+'" data-id="'+s.id+'" tabindex="0" role="checkbox" aria-checked="'+on+'"'+(locked?' aria-disabled="true"':'')+'><div class="box">'+(on?'✓':'')+'</div><div><div class="n">'+s.n+'</div><div class="d">'+s.d+'</div></div>'+(s.free?'':'<div class="pts">+10</div>')+'</li>';
+  }).join('');
+  $('sessFinish').disabled = !cur.steps.every(s => cur.done.has(s.id));
+  $('sessFinish').textContent = 'Full time +'+pendingPoints();
+}
+function stepTap(id){
+  const s = cur.steps.find(x=>x.id===id); if (!s || s.free) return;
+  if (s.locked && !cur.done.has('dry')) { toast('Wait for the timer'); return; }
+  if (cur.done.has(id)) return;
+  if (s.timer){ startTimer(); return; }
+  cur.done.add(id); renderSteps();      // points are paid at Finish, so a closed session pays nothing
+}
+// Counts down to a fixed end time, so time spent with the iPad locked still counts.
+function startTimer(){
+  if (cur.timerId) return;
+  cur.timerEnd = Date.now() + 60000; $('timerBox').hidden = false;
+  const tick = () => {
+    if (!cur || !cur.timerId) return;
+    const left = Math.max(0, Math.ceil((cur.timerEnd - Date.now())/1000)); $('timer').textContent = left;
+    if (left <= 0){ clearInterval(cur.timerId); cur.timerId = null; $('timerBox').hidden = true; cur.done.add('dry'); renderSteps(); toast('Dry. Differin unlocked.'); }
+  };
+  cur.timerId = setInterval(tick, 250); tick();
+}
+function finish(){
+  const snap = JSON.stringify(S);
+  const t = today(); const r = dayRec(t); const hm = new Date(); r[cur.kind] = pad(hm.getHours())+':'+pad(hm.getMinutes()); r[cur.kind+'Mode'] = modeOf(cur.steps);
+  if (cur.kind==='shower') S.bpShowers++;
+  const pts = pendingPoints(); award(pts); toast('Session done +'+pts);
+  cleanSheetCheck(t);
+  showUndo(snap, (cur.kind==='shower'?'Shower':'Sink')+' logged at '+r[cur.kind]+'. Wrong one?');
+  closeSession(); render();
+}
+function celebrate(){
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  for (let i = 0; i < 14; i++){ const el = document.createElement('div'); el.className = 'confetti'; el.style.background = ['#b6ff3b','#f3f6f1','#ffc531'][i % 3]; el.style.left = (4 + Math.random()*92)+'vw'; el.style.animationDelay = (Math.random()*0.5)+'s'; el.setAttribute('aria-hidden','true'); document.body.appendChild(el); setTimeout(()=>el.remove(), 2600); }
+}
+function clearToday(){
+  const t = today(); const r = S.days[t]; if (!r) return;
+  S.points = Math.max(0, S.points - (r.pts || 0)); delete S.days[t];
+  if (cur) closeSession(); hideUndo(); render(); toast('Today cleared - do the day again');
+}
+function showUndo(snap, text){
+  undo = {snap}; $('undoText').textContent = text; $('undoRow').hidden = false;
+  clearTimeout(undoTimer); undoTimer = setTimeout(hideUndo, 10000);
+}
+function hideUndo(){ undo = null; $('undoRow').hidden = true; clearTimeout(undoTimer); }
+function closeSession(){ if (cur && cur.timerId) clearInterval(cur.timerId); cur = null; $('session').hidden = true; $('timerBox').hidden = true; }
+function describe(n){ const ds = Object.values(n.days).filter(r => r.shower || r.sink).length; return n.points+' points, '+ds+' day'+(ds===1?'':'s')+' with a wash logged, start date '+n.start; }
+
+// events
+$('tShower').addEventListener('click', ()=>openSession('shower'));
+$('tSink').addEventListener('click', ()=>openSession('sink'));
+$('lastYes').addEventListener('click', ()=>setBedtime(true));
+$('lastNo').addEventListener('click', ()=>setBedtime(null));
+$('steps').addEventListener('click', e => { const li = e.target.closest('.step'); if (li) stepTap(li.dataset.id); });
+$('steps').addEventListener('keydown', e => { if (e.key===' '||e.key==='Enter'){ const li = e.target.closest('.step'); if (li){ e.preventDefault(); stepTap(li.dataset.id);} } });
+$('sessFinish').addEventListener('click', finish);
+$('sessClose').addEventListener('click', ()=>{ closeSession(); });
+$('undoBtn').addEventListener('click', ()=>{ if (!undo) return; try{ S = check(Object.assign(fresh(), JSON.parse(undo.snap))); }catch(e){ return; } hideUndo(); render(); toast('Undone'); });
+$('photoDone').addEventListener('click', ()=>{ dayRec(today()).photo = true; award(100); toast('Photo logged +100'); render(); });
+$('pauseAz').addEventListener('click', e => { e.preventDefault(); if (azPaused()){ S.azPausedUntil=''; toast('Azelaic acid back on'); } else { S.azPausedUntil = addDays(today(),7); toast('Azelaic acid paused for 7 days'); } render(); });
+$('bpEvery').addEventListener('click', ()=>{ S.bpAlt = false; render(); toast('Benzoyl peroxide every shower'); });
+$('bpOther').addEventListener('click', ()=>{ S.bpAlt = true; render(); toast('Benzoyl peroxide every other shower'); });
+const readPhone = () => { S.dadPhone = $('dadPhone').value.replace(/[^+\d]/g,''); save(); return S.dadPhone; };
+$('dadPhone').addEventListener('change', readPhone);
+$('textBtn').addEventListener('click', ()=>{ const num = readPhone(); if (!num){ toast('Type Dad\'s phone number first'); $('dadPhone').focus(); return; } const body = 'Clean Sheet backup '+today()+'\n'+encode(); location.href = 'sms:'+num+'&body='+encodeURIComponent(body); });
+$('startDate').addEventListener('change', e => { if (RE_DATE.test(e.target.value) && !isNaN(parse(e.target.value))){ S.start = e.target.value; render(); toast('Start date set - run recalculated'); } });
+$('nameIn').addEventListener('change', e => { S.name = cleanName(e.target.value); render(); });
+$('exportBtn').addEventListener('click', ()=>{ $('io').hidden=false; $('ioRow').hidden=false; $('loadConfirm').hidden=true; $('io').value = encode(); $('copyBtn').hidden=false; $('loadBtn').hidden=true; });
+$('importBtn').addEventListener('click', ()=>{ $('io').hidden=false; $('ioRow').hidden=false; $('loadConfirm').hidden=true; $('io').value=''; $('io').placeholder='Paste the backup code here'; $('copyBtn').hidden=true; $('loadBtn').hidden=false; });
+$('copyBtn').addEventListener('click', ()=>{
+  $('io').select(); const fail = () => toast('Could not copy - press and hold the code to copy it');
+  try{ navigator.clipboard.writeText($('io').value).then(()=>toast('Copied'), fail); }catch(e){ try{ if (document.execCommand('copy')) toast('Copied'); else fail(); }catch(e2){ fail(); } }
+});
+$('loadBtn').addEventListener('click', ()=>{
+  try{ pendingLoad = decode($('io').value); }catch(e){ pendingLoad = null; $('loadConfirm').hidden = true; toast('That is not a backup code'); return; }
+  $('loadText').textContent = 'This code has '+describe(pendingLoad)+'. This iPad has '+describe(S)+'. Replace what is on this iPad?';
+  $('loadConfirm').hidden = false;
+});
+$('loadNo').addEventListener('click', ()=>{ pendingLoad = null; $('loadConfirm').hidden = true; });
+$('loadYes').addEventListener('click', ()=>{ if (!pendingLoad) return; S = pendingLoad; pendingLoad = null; $('loadConfirm').hidden = true; hideUndo(); save(); render(); toast('Backup loaded'); });
+let clearTimer = null;
+$('clearBtn').addEventListener('click', ()=>{ $('clearYes').hidden = false; clearTimeout(clearTimer); clearTimer = setTimeout(()=>{ $('clearYes').hidden = true; }, 5000); });
+$('clearYes').addEventListener('click', ()=>{ $('clearYes').hidden = true; clearTimeout(clearTimer); clearToday(); });
+$('resetBtn').addEventListener('click', ()=>{ $('resetYes').hidden = false; clearTimeout(resetTimer); resetTimer = setTimeout(()=>{ $('resetYes').hidden = true; }, 5000); });
+$('resetYes').addEventListener('click', ()=>{ const phone = S.dadPhone; S = fresh(); S.dadPhone = phone; clearTimeout(resetTimer); save(); $('resetYes').hidden = true; hideUndo(); calOff = 0; render(); toast('Fresh start'); });
+$('calPrev').addEventListener('click', ()=>{ calOff--; renderCal(); });
+$('calNext').addEventListener('click', ()=>{ if (calOff < 0){ calOff++; renderCal(); } });
+
+// Redraw when the app comes back to the front (the iPad keeps it paused in memory overnight) and when the plan day changes.
+document.addEventListener('visibilitychange', ()=>{ if (!document.hidden) render(); });
+window.addEventListener('pageshow', ()=>render());
+window.addEventListener('focus', ()=>render());
+setInterval(()=>{ if (today() !== shownDay) render(); }, 60000);
+
+load();
+try{ if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(()=>{}); }catch(e){}   // ask the iPad to keep this app's saved data
+render();
+})();
+</script>
+
+<script>
+if ('serviceWorker' in navigator) { window.addEventListener('load', ()=>{ navigator.serviceWorker.register('sw.js').catch(()=>{}); }); }
+</script>
+</body>
+</html>
